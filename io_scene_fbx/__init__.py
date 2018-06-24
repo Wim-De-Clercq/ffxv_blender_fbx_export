@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "FBX format",
+    "name": "FFXV upgraded FBX format",
     "author": "Campbell Barton, Bastien Montagne, Jens Restemeier",
     "version": (3, 7, 17),
     "blender": (2, 79, 0),
@@ -248,6 +248,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
 
     version = EnumProperty(
             items=(('BIN7400', "FBX 7.4 binary", "Modern 7.4 binary version"),
+			       ('FFXV_FBX', "FFXV FBX", "it's the 7.4 version with small additions."),
                    ('ASCII6100', "FBX 6.1 ASCII",
                                  "Legacy 6.1 ascii version - WARNING: Deprecated and no more maintained"),
                    ),
@@ -510,7 +511,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
 
         layout.prop(self, "version")
 
-        if self.version == 'BIN7400':
+        if self.version in ('BIN7400', 'FFXV_FBX'):
             layout.prop(self, "ui_tab", expand=True)
             if self.ui_tab == 'MAIN':
                 layout.prop(self, "use_selection")
@@ -618,6 +619,9 @@ class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
         if self.version == 'BIN7400':
             from . import export_fbx_bin
             return export_fbx_bin.save(self, context, **keywords)
+        if self.version == 'FFXV_FBX':
+            from . import export_ffxv_bin
+            return export_ffxv_bin.save(self, context, **keywords)
         else:
             from . import export_fbx
             return export_fbx.save(self, context, **keywords)
